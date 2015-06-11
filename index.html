@@ -1,0 +1,99 @@
+<html>
+<head>
+<link rel="stylesheet" type="text/css" href="style.css">
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.23/angular.min.js"></script>
+
+<script src = "ex1.js"></script>
+<script src="js/controller.js"></script>
+
+</head>
+blank circle = no relation, <span style="color:red">red circle</span> = intransitive, <span style="color:green"> green circle</span>  = transitive
+<br>
+<body ng-app="animApp" ng-controller="animCtrl" ng-style="style()">
+
+
+<div id="buttonPanel">
+<button type="button" ng-click="playPause()" ng-model="playButt">{{buttonText}}</button>
+<br>
+<input type="range" value="1" id="spdSlider" min="-4.0" max="4.0" ng-change="changePlaySpd()" ng-model="playSpd" step="0.01" ng-mousedown="pause()" mg-mouseup="play()">play speed: {{playSpd | number:2}}
+<button type="button" ng-click="pause();playSpd=-4">-4</button>
+<button type="button" ng-click="pause();playSpd=-2">-2</button>
+<button type="button" ng-click="pause();playSpd=1">1</button>
+<button type="button" ng-click="pause();playSpd=2">2</button>
+<button type="button" ng-click="pause();playSpd=4">4</button>
+<br>
+<input type="range" step="0.1" value="1" ng-model="scaleWidth" id="scale" min="0.1" max="10">scale width: {{scaleWidth | number:2}}
+<button type="button" ng-click="scaleWidth=0.25">0.25</button>
+<button type="button" ng-click="scaleWidth=0.5">0.5</button>
+<button type="button" ng-click="scaleWidth=1">1</button>
+<button type="button" ng-click="scaleWidth=2">2</button>
+<button type="button" ng-click="scaleWidth=4">4</button>
+<br>
+<input type="range" ng-mousedown="pause();seekDown = true" ng-mouseup="playButt = false;buttonText = 'play';seekDown = false" id="seekBar" step"0.01" value="0" ng-model="seekBar" min="0.0" ng-attr-max="{{(totTime)}}" ng-click="playButt = false; buttonText = 'play'">seek bar:
+
+
+<input type="number" ng-model="seekNum" min = "0.0" max= "1.0" ng-change="enterNum();pause();" ng-mousedown="pause()">
+
+<br>
+<button type="button" ng-click="seekBar=0; seekNum = 0;">beginning</button>
+<button type="button" ng-click="seekBar=0.25*totTime; seekNum = 0.25">0.25</button>
+<button type="button" ng-click="seekBar=0.5*totTime; seekNum = 0.5">0.5</button>
+<button type="button" ng-click="seekBar=0.75*totTime; seekNum = 0.75">0.75</button>
+
+
+
+<br>
+
+</div>
+
+<svg ng-attr-height="{{graph.height}}" ng-attr-width="{{graph.width}}"  preserveAspectRatio="none" id="svgAnim">
+	<defs>
+		<marker id="markerArrow" markerWidth="5" markerHeight="5" refX="0" refY="10" orient="auto" viewBox="0 0 20 20" markerWidth="8" markerHeight="6" fill="currentStrokePaint" stroke="currentStrokePaint">
+			<path d="M 0 0 L 20 10 L 0 20 z"/>
+		</marker>
+	</defs>
+
+	<g ng-repeat="line in staffLines">
+	<line class="staff" ng-style="{{line.style}}"
+		ng-attr-x1="{{line.x1}}"
+		ng-attr-x2="{{line.x2}}"
+		ng-attr-y1="{{line.y1}}"
+		ng-attr-y2="{{line.y2}}">
+			</line>
+	<text x="2" ng-attr-y="{{line.y1-5}}" class="text">{{line.label}}</text>
+	
+	</g>
+
+<g ng-attr-transform="translate({{-seekBar}},0)"  id="timeline">
+<g ng-attr-transform="scale({{scaleWidth}},1)">
+	<g ng-repeat="arrow in arrows">
+		<g ng-if="drawDist(arrow.x1) && !seekDown"> 
+	<line class="arrow" marker-end="url(#markerArrow)" marker-fill="{{arrow.style}}" 
+		ng-attr-x1="{{(arrow.x1)}}"
+		ng-attr-x2="{{arrow.x1}}"
+		ng-attr-y1="{{arrow.y1}}"
+		ng-attr-y2="{{arrow.y2}}"
+		ng-style="{{arrow.style}}"
+		ng-attr-fill"{{arrow.style}}"/>
+			<g ng-attr-transform="scale({{1/scaleWidth}},1)">
+		<text ng-attr-x="{{(arrow.x1)*scaleWidth-10}}"  ng-attr-y="{{lineStart - 20}}" class="text">{{arrow.action}}
+		</text>
+		<circle ng-repeat="sg in arrow.sg track by $index" ng-attr-cx="{{(arrow.x1)*scaleWidth}}" ng-style="cirStyle(sg.state)" ng-attr-cy="{{$index*(cirRad+10)+lineStart+((chknNum-1)*lineSpacing)+30}}" ng-attr-r="{{cirRad}}" class="circle"  />
+				<g ng-if="arrow.hier" ng-repeat="num in arrow.hier track by $index">
+				<text ng-attr-x="{{(arrow.x1)*scaleWidth-5}}"   ng-attr-y="{{15*($index+1)}}" class="text">{{num}}</text>	
+				</g>	
+			</g>	
+		</g>
+	</g>
+	<g ng-repeat="stamp in timeRuler">
+	
+	<text ng-attr-x="{{(stamp.time)*scaleWidth-15}}"  ng-if="drawDist(stamp.time)" ng-attr-y="{{lineStart+((chknNum-1)*lineSpacing)+20}}" ng-attr-transform="scale({{1/scaleWidth}},1)" class="text">{{stamp.timestamp}}</text>
+	<line class="tick1" ng-attr-x1="{{stamp.time}}" ng-if="drawDist(stamp.time)" ng-attr-x2="{{stamp.time}}" ng-attr-y1="{{lineStart+((chknNum-1)*lineSpacing)+5}}" ng-attr-y2="{{lineStart+((chknNum-1)*lineSpacing)+9}}"/>
+	</g>
+	</g>
+</g>
+	<text x="2" ng-repeat="sg in arrows[arrows.length-1].sg track by $index" ng-attr-y="{{$index*(cirRad+10)+lineStart+((chknNum-1)*lineSpacing)+35}}" class="text">{{sg.group}}</text> 
+ 
+</svg>
+</body>
+</html>
