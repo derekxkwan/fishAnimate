@@ -7,8 +7,7 @@
 <script src="js/controller.js"></script>
 
 </head>
-blank circle = no relation, <span style="color:red">red circle</span> = intransitive, <span style="color:green"> green circle</span>  = transitive
-<br>
+
 <body ng-app="animApp" ng-controller="animCtrl" ng-style="style()">
 
 <div id="descrip">
@@ -19,7 +18,9 @@ My app animates notation developed by Chase. The staff lines represent chickens 
 Why I call it fishAnimate as opposed to chickenAnimate is that because the original version was chickenAnimate and improvements were made to visualize a new set of data involving fish rather than chickens.
 	
 </div>
-
+<br>
+blank circle = no relation, <span style="color:red">red circle</span> = intransitive, <span style="color:green"> green circle</span>  = transitive
+<br>
 <div id="buttonPanel">
 <button type="button" ng-click="playPause()" ng-model="playButt">{{buttonText}}</button>
 <br>
