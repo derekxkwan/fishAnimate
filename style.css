@@ -1,0 +1,55 @@
+.staff{
+stroke:rgb(255,255,255);
+stroke-width:2;
+
+}
+
+#seekBar{
+width:70%;
+
+}
+#scale{
+width:55%;
+
+}
+.tick1{
+stroke:rgb(255,255,255);
+stroke-width:2;
+}
+.arrow,#markerArrow, #revArrow
+{
+fill:rgb(255,255,255);
+stroke:rgb(255, 255, 255);
+stroke-width:2;
+}
+input[type=range]{
+-webkit-appearance: none;
+border-radius:8px;
+background-color:#ffffff;
+}
+.circle{
+stroke:rgb(255,255,255);
+stroke-width:1;
+fill:rgb(255,0,0);
+z-index:0;
+
+}
+
+.text{
+font-family:"Helvetica";
+font-size:12;
+stroke-width:1;
+stroke:rgb(255, 255, 255);
+fill:white;
+z-index:999;
+}
+#spdSlider{
+width:65%;
+
+}
+body{
+font-family:"Helvetica";
+font-size:14;
+color:white;
+background-color:black;}
+
