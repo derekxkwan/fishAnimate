@@ -15,7 +15,11 @@ def convHhmmss(sec):
     return timeStr
 
 def makeEvent(numChkn):
-    return str(rnd(numChkn)+1) + " T " + str(rnd(numChkn)+1)
+    chkn1 = rnd(numChkn)+1
+    chkn2 = chkn1
+    while chkn2 == chkn1:
+        chkn2 = rnd(numChkn)+1
+    return str(chkn1) + " T " + str(chkn2)
 
 
 for entry in range(entries):
@@ -26,4 +30,5 @@ for entry in range(entries):
 
 with open(fileName, 'w') as outFile:
     json.dump(chkData, outFile)
+
 
